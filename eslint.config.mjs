@@ -1,10 +1,15 @@
-import nextConfig from "eslint-config-next";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
-const eslintConfig = [
-  ...nextConfig,
+export default tseslint.config(
   {
-    ignores: ["node_modules/**"],
+    ignores: ["node_modules/**", "dist/**"],
   },
-];
-
-export default eslintConfig;
+  tseslint.configs.recommended,
+  {
+    rules: {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    },
+  },
+);

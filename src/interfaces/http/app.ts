@@ -1,0 +1,46 @@
+import express, { Application } from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import { config } from 'dotenv';
+import { database } from '../../infrastructure/database/connection';
+import { PostgresUserRepository } from '../../infrastructure/repositories/postgres-user.repository';
+import { JwtService } from '../../infrastructure/config/jwt';
+import { AuthUseCase } from '../../application/usecases/auth.usecase';
+import { AuthController } from './controllers/auth.controller';
+import { createAuthRouter } from './routes/auth.route';
+import { errorHandler, notFoundHandler } from './middleware/error.middleware';
+
+config();
+
+const createApp = async (): Promise<Application> => {
+  await database.connect();
+  
+  const pool = database.getPool();
+  
+  const userRepository = new PostgresUserRepository(pool);
+  
+  const jwtService = new JwtService();
+  
+  const authUseCase = new AuthUseCase(userRepository, jwtService);
+  const authController = new AuthController(authUseCase);
+
+  const app = express();
+
+  app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(morgan('dev'));
+
+  app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  app.use('/api/auth', createAuthRouter(authController));
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+
+  return app;
+};
+
+export { createApp };
