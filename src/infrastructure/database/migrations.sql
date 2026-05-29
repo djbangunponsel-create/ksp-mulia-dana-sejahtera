@@ -1,3 +1,15 @@
+-- Create ksp_settings table
+CREATE TABLE IF NOT EXISTS ksp_settings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nama VARCHAR(255) NOT NULL,
+  badan_hukum VARCHAR(255) NOT NULL,
+  alamat TEXT NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  telepon VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Create users table
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

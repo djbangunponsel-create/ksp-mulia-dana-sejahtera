@@ -5,4 +5,4 @@ export declare class ProfileController {
     constructor(userRepository: UserRepository);
     getProfile: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
-export declare const createProfileRouter: (profileController: ProfileController) => import("express-serve-static-core").Router;
+export declare const createProfileRouter: (profileController: ProfileController) => any;

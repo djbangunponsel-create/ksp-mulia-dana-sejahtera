@@ -66,3 +66,14 @@ export enum LoanStatus {
   PAID = 'paid',
   DEFAULTED = 'defaulted'
 }
+
+export interface KSPSettings {
+  id: string;
+  nama: string;
+  badan_hukum: string;
+  alamat: string;
+  email: string;
+  telepon: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

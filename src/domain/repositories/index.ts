@@ -1,4 +1,9 @@
-import { User, Member, Savings, Loan } from '../entities';
+import { User, Member, Savings, Loan, KSPSettings } from '../entities';
+
+export interface KSPSettingsRepository {
+  get(): Promise<KSPSettings | null>;
+  update(data: Omit<KSPSettings, 'id' | 'createdAt' | 'updatedAt'>): Promise<KSPSettings>;
+}
 
 export interface UserRepository {
   create(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User>;

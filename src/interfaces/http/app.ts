@@ -4,10 +4,12 @@ import morgan from 'morgan';
 import { config } from 'dotenv';
 import { database } from '../../infrastructure/database/connection';
 import { PostgresUserRepository } from '../../infrastructure/repositories/postgres-user.repository';
+import { PostgresKSPSettingsRepository } from '../../infrastructure/repositories/postgres-ksp-settings.repository';
 import { JwtService } from '../../infrastructure/config/jwt';
 import { AuthUseCase } from '../../application/usecases/auth.usecase';
 import { AuthController } from './controllers/auth.controller';
 import { ProfileController, createProfileRouter } from './controllers/profile.controller';
+import { KSPSettingsController, createKSPSettingsRouter } from './controllers/ksp-settings.controller';
 import { createAuthRouter } from './routes/auth.route';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 
@@ -19,12 +21,14 @@ const createApp = async (): Promise<Application> => {
   const pool = database.getPool();
   
   const userRepository = new PostgresUserRepository(pool);
+  const kspSettingsRepository = new PostgresKSPSettingsRepository(pool);
   
   const jwtService = new JwtService();
   
   const authUseCase = new AuthUseCase(userRepository, jwtService);
   const authController = new AuthController(authUseCase);
   const profileController = new ProfileController(userRepository);
+  const kspSettingsController = new KSPSettingsController(kspSettingsRepository);
 
   const app = express();
 
@@ -46,6 +50,7 @@ const createApp = async (): Promise<Application> => {
 
   app.use('/api/auth', createAuthRouter(authController));
   app.use('/api/profile', createProfileRouter(profileController));
+  app.use('/api/pengaturan-ksp', createKSPSettingsRouter(kspSettingsController));
 
   app.use(notFoundHandler);
   app.use(errorHandler);
