@@ -1,7 +1,7 @@
 import { UserRepository } from '../../domain/repositories';
 import { RegisterUserDTO, LoginUserDTO, AuthResult } from '../dtos';
 import { JwtService } from '../../infrastructure/config/jwt';
-import { User } from '../../domain/entities';
+import { User, UserRole } from '../../domain/entities';
 import bcrypt from 'bcryptjs';
 
 export class AuthUseCase {
@@ -25,7 +25,7 @@ export class AuthUseCase {
       nama: data.nama,
       email: data.email,
       password: hashedPassword,
-      role: data.role ?? 'member',
+      role: data.role ?? UserRole.MEMBER,
       status: 'active'
     });
 

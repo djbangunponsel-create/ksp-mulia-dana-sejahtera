@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import { UserRepository } from '../../domain/repositories';
-import { User, UserRole } from '../../domain/entities';
+import { User } from '../../domain/entities';
 
 export class PostgresUserRepository implements UserRepository {
   constructor(private pool: Pool) {}

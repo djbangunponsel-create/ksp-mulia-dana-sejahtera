@@ -7,6 +7,7 @@ import { PostgresUserRepository } from '../../infrastructure/repositories/postgr
 import { JwtService } from '../../infrastructure/config/jwt';
 import { AuthUseCase } from '../../application/usecases/auth.usecase';
 import { AuthController } from './controllers/auth.controller';
+import { ProfileController, createProfileRouter } from './controllers/profile.controller';
 import { createAuthRouter } from './routes/auth.route';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 
@@ -23,6 +24,7 @@ const createApp = async (): Promise<Application> => {
   
   const authUseCase = new AuthUseCase(userRepository, jwtService);
   const authController = new AuthController(authUseCase);
+  const profileController = new ProfileController(userRepository);
 
   const app = express();
 
@@ -43,6 +45,7 @@ const createApp = async (): Promise<Application> => {
   });
 
   app.use('/api/auth', createAuthRouter(authController));
+  app.use('/api/profile', createProfileRouter(profileController));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

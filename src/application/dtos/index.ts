@@ -6,7 +6,7 @@ export interface RegisterUserDTO {
   nama: string;
   email: string;
   password: string;
-  role?: string;
+  role?: UserRole;
 }
 
 export interface LoginUserDTO {
