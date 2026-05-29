@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import path from 'path';
 import { config } from 'dotenv';
 import { database } from '../../infrastructure/database/connection';
 import { PostgresUserRepository } from '../../infrastructure/repositories/postgres-user.repository';
@@ -44,6 +45,8 @@ const createApp = async (): Promise<Application> => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(morgan('dev'));
+  
+  app.use(express.static(path.join(process.cwd(), 'public')));
 
   app.get('/', (req, res) => {
     res.status(200).json({ 

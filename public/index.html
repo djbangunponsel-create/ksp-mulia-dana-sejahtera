@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KSP Mulia Dana Sejahtera - Laporan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100">
+  <div class="container mx-auto p-8">
+    <h1 class="text-3xl font-bold text-center mb-8">KSP Mulia Dana Sejahtera</h1>
+    
+    <div id="ksp-info" class="bg-white rounded-lg shadow-md p-6 mb-8 max-w-2xl mx-auto">
+      <h2 class="text-xl font-semibold mb-4">Identitas KSP</h2>
+      <div id="ksp-detail" class="space-y-2">
+        <p><span class="font-medium">Nama:</span> <span id="ksp-nama">-</span></p>
+        <p><span class="font-medium">Badan Hukum:</span> <span id="ksp-badanhukum">-</span></p>
+        <p><span class="font-medium">Alamat:</span> <span id="ksp-alamat">-</span></p>
+        <p><span class="font-medium">Email:</span> <span id="ksp-email">-</span></p>
+        <p><span class="font-medium">Telepon:</span> <span id="ksp-telepon">-</span></p>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <a href="/laporan-neraca.html" class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+        <h3 class="text-lg font-semibold mb-2">Neraca</h3>
+        <p class="text-gray-600">Laporan posisi keuangan KSP</p>
+      </a>
+      
+      <a href="/laporan-phu.html" class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+        <h3 class="text-lg font-semibold mb-2">Laporan PHU</h3>
+        <p class="text-gray-600">Laporan Perubahan Hak Milik Usaha</p>
+      </a>
+      
+      <a href="/laporan-arus-kas.html" class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+        <h3 class="text-lg font-semibold mb-2">Arus Kas</h3>
+        <p class="text-gray-600">Laporan aliran kas masuk dan keluar</p>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    async function loadKSPInfo() {
+      try {
+        const res = await fetch('/api/pengaturan-ksp');
+        const data = await res.json();
+        
+        if (data.data) {
+          document.getElementById('ksp-nama').textContent = data.data.nama || '-';
+          document.getElementById('ksp-badanhukum').textContent = data.data.badan_hukum || '-';
+          document.getElementById('ksp-alamat').textContent = data.data.alamat || '-';
+          document.getElementById('ksp-email').textContent = data.data.email || '-';
+          document.getElementById('ksp-telepon').textContent = data.data.telepon || '-';
+        }
+      } catch (error) {
+        console.error('Error loading KSP info:', error);
+      }
+    }
+    
+    loadKSPInfo();
+  </script>
+</body>
+</html>

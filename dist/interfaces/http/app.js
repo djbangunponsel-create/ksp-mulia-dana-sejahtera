@@ -7,6 +7,7 @@ exports.createApp = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
+const path_1 = __importDefault(require("path"));
 const dotenv_1 = require("dotenv");
 const connection_1 = require("../../infrastructure/database/connection");
 const postgres_user_repository_1 = require("../../infrastructure/repositories/postgres-user.repository");
@@ -42,6 +43,7 @@ const createApp = async () => {
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: true }));
     app.use((0, morgan_1.default)('dev'));
+    app.use(express_1.default.static(path_1.default.join(process.cwd(), 'public')));
     app.get('/', (req, res) => {
         res.status(200).json({
             status: 'success',

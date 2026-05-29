@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arus Kas - KSP Mulia Dana Sejahtera</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      .print-area { display: block !important; }
+    }
+    .print-area { display: none; }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-100 p-4">
+  <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8 print:shadow-none print:p-0">
+    <div class="no-print mb-4 flex justify-between items-center">
+      <h2 class="text-2xl font-bold text-gray-800">Arus Kas</h2>
+      <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        Cetak Laporan
+      </button>
+    </div>
+    
+    <div id="ksp-header" class="print-area mb-6 text-center border-b-2 border-gray-800 pb-4">
+      <h1 class="text-2xl font-bold uppercase" id="ksp-nama">-</h1>
+      <p class="text-lg" id="ksp-badanhukum">-</p>
+      <p class="text-sm" id="ksp-alamat">-</p>
+      <p class="text-sm">Email: <span id="ksp-email">-</span> | Telp: <span id="ksp-telepon">-</span></p>
+    </div>
+    
+    <div class="mt-6">
+      <h3 class="text-xl font-semibold mb-4">Arus Kas</h3>
+      <p class="text-sm text-gray-500 mb-4">Tanggal: <span id="report-date">-</span></p>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="border border-gray-300 px-4 py-2 text-left">Keterangan</th>
+              <th class="border border-gray-300 px-4 py-2 text-right">Jumlah</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2">Kas Masuk</td>
+              <td class="border border-gray-300 px-4 py-2 text-right" id="kas-masuk">-</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2">Kas Keluar</td>
+              <td class="border border-gray-300 px-4 py-2 text-right" id="kas-keluar">-</td>
+            </tr>
+            <tr class="font-bold bg-gray-50">
+              <td class="border border-gray-300 px-4 py-2">Total Arus Kas</td>
+              <td class="border border-gray-300 px-4 py-2 text-right" id="total-aruskas">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadReport() {
+      try {
+        const [reportRes, kspRes] = await Promise.all([
+          fetch('/api/laporan/arus-kas'),
+          fetch('/api/pengaturan-ksp')
+        ]);
+        
+        const reportData = await reportRes.json();
+        const kspData = await kspRes.json();
+        
+        if (kspData.data) {
+          document.getElementById('ksp-nama').textContent = kspData.data.nama || '-';
+          document.getElementById('ksp-badanhukum').textContent = kspData.data.badan_hukum || '-';
+          document.getElementById('ksp-alamat').textContent = kspData.data.alamat || '-';
+          document.getElementById('ksp-email').textContent = kspData.data.email || '-';
+          document.getElementById('ksp-telepon').textContent = kspData.data.telepon || '-';
+        }
+        
+        if (reportData.report) {
+          document.getElementById('report-date').textContent = new Date(reportData.report.date).toLocaleDateString('id-ID');
+          document.getElementById('kas-masuk').textContent = (reportData.report.cashFlow?.kas_masuk || 0).toLocaleString('id-ID');
+          document.getElementById('kas-keluar').textContent = (reportData.report.cashFlow?.kas_keluar || 0).toLocaleString('id-ID');
+          document.getElementById('total-aruskas').textContent = 
+            ((reportData.report.cashFlow?.kas_masuk || 0) - (reportData.report.cashFlow?.kas_keluar || 0)).toLocaleString('id-ID');
+        }
+      } catch (error) {
+        console.error('Error loading report:', error);
+      }
+    }
+    
+    loadReport();
+  </script>
+</body>
+</html>
