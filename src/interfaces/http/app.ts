@@ -31,8 +31,15 @@ const createApp = async (): Promise<Application> => {
   app.use(express.urlencoded({ extended: true }));
   app.use(morgan('dev'));
 
+  app.get('/', (req, res) => {
+    res.status(200).json({ 
+      status: 'success', 
+      message: 'KSP Mulia Dana Sejahtera API Running' 
+    });
+  });
+
   app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.status(200).json({ status: 'ok' });
   });
 
   app.use('/api/auth', createAuthRouter(authController));
