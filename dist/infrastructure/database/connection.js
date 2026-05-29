@@ -4,6 +4,17 @@ exports.database = exports.DatabaseConnection = void 0;
 const pg_1 = require("pg");
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
+const KSP_SETTINGS_TABLE = `
+CREATE TABLE IF NOT EXISTS ksp_settings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nama VARCHAR(255) NOT NULL,
+  badan_hukum VARCHAR(255) NOT NULL,
+  alamat TEXT NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  telepon VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);`;
 class DatabaseConnection {
     static instance;
     pool;
@@ -29,6 +40,7 @@ class DatabaseConnection {
         try {
             await this.pool.connect();
             console.log('Database connected successfully');
+            await this.runMigrations();
         }
         catch (error) {
             console.error('Database connection error:', error);
@@ -38,6 +50,15 @@ class DatabaseConnection {
     async disconnect() {
         await this.pool.end();
         console.log('Database disconnected');
+    }
+    async runMigrations() {
+        try {
+            await this.pool.query(KSP_SETTINGS_TABLE);
+            console.log('KSP settings table ensured');
+        }
+        catch (error) {
+            console.error('Migration error:', error);
+        }
     }
 }
 exports.DatabaseConnection = DatabaseConnection;

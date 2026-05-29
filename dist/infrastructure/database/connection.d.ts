@@ -7,6 +7,7 @@ export declare class DatabaseConnection {
     getPool(): Pool;
     connect(): Promise<void>;
     disconnect(): Promise<void>;
+    private runMigrations;
 }
 export declare const database: DatabaseConnection;
 export type DatabasePool = Pool;
