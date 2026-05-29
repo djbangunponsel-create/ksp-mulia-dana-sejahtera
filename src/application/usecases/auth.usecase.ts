@@ -1,7 +1,7 @@
 import { UserRepository } from '../../domain/repositories';
 import { RegisterUserDTO, LoginUserDTO, AuthResult } from '../dtos';
 import { JwtService } from '../../infrastructure/config/jwt';
-import { User, UserRole } from '../../domain/entities';
+import { User } from '../../domain/entities';
 import bcrypt from 'bcryptjs';
 
 export class AuthUseCase {
@@ -22,11 +22,11 @@ export class AuthUseCase {
     );
 
     const user = await this.userRepository.create({
+      nama: data.nama,
       email: data.email,
       password: hashedPassword,
-      name: data.name,
-      role: data.role ?? UserRole.MEMBER,
-      isActive: true
+      role: data.role ?? 'member',
+      status: 'active'
     });
 
     return this.generateAuthResult(user);
@@ -43,7 +43,7 @@ export class AuthUseCase {
       throw new Error('Invalid credentials');
     }
 
-    if (!user.isActive) {
+    if (user.status !== 'active') {
       throw new Error('Account is inactive');
     }
 
@@ -53,10 +53,10 @@ export class AuthUseCase {
   private generateAuthResult(user: User): AuthResult {
     const userWithoutPassword: Omit<User, 'password'> = {
       id: user.id,
+      nama: user.nama,
       email: user.email,
-      name: user.name,
       role: user.role,
-      isActive: user.isActive,
+      status: user.status,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };

@@ -3,10 +3,10 @@ import { UserRole, User } from '../../domain/entities';
 export { UserRole, User };
 
 export interface RegisterUserDTO {
+  nama: string;
   email: string;
   password: string;
-  name: string;
-  role?: UserRole;
+  role?: string;
 }
 
 export interface LoginUserDTO {

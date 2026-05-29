@@ -1,10 +1,10 @@
 export interface User {
   id: string;
+  nama: string;
   email: string;
   password: string;
-  name: string;
   role: UserRole;
-  isActive: boolean;
+  status: 'active' | 'inactive';
   createdAt: Date;
   updatedAt: Date;
 }

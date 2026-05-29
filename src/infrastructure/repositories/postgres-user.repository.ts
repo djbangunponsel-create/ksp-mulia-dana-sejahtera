@@ -7,10 +7,10 @@ export class PostgresUserRepository implements UserRepository {
 
   async create(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
     const result = await this.pool.query(
-      `INSERT INTO users (email, password, name, role, is_active)
+      `INSERT INTO users (nama, email, password, role, status)
        VALUES ($1, $2, $3, $4, $5)
-       RETURNING *, id as "id"`,
-      [user.email, user.password, user.name, user.role, user.isActive]
+       RETURNING *`,
+      [user.nama, user.email, user.password, user.role, user.status]
     );
 
     const row = result.rows[0];
@@ -19,7 +19,7 @@ export class PostgresUserRepository implements UserRepository {
 
   async findById(id: string): Promise<User | null> {
     const result = await this.pool.query(
-      'SELECT id, email, password, name, role, is_active as "isActive", created_at as "createdAt", updated_at as "updatedAt" FROM users WHERE id = $1',
+      'SELECT id, nama, email, password, role, status, created_at as "createdAt", updated_at as "updatedAt" FROM users WHERE id = $1',
       [id]
     );
 
@@ -29,7 +29,7 @@ export class PostgresUserRepository implements UserRepository {
 
   async findByEmail(email: string): Promise<User | null> {
     const result = await this.pool.query(
-      'SELECT id, email, password, name, role, is_active as "isActive", created_at as "createdAt", updated_at as "updatedAt" FROM users WHERE email = $1',
+      'SELECT id, nama, email, password, role, status, created_at as "createdAt", updated_at as "updatedAt" FROM users WHERE email = $1',
       [email]
     );
 
@@ -39,7 +39,7 @@ export class PostgresUserRepository implements UserRepository {
 
   async findAll(): Promise<User[]> {
     const result = await this.pool.query(
-      'SELECT id, email, password, name, role, is_active as "isActive", created_at as "createdAt", updated_at as "updatedAt" FROM users'
+      'SELECT id, nama, email, password, role, status, created_at as "createdAt", updated_at as "updatedAt" FROM users'
     );
 
     return result.rows.map(this.mapRowToUser);
@@ -50,6 +50,10 @@ export class PostgresUserRepository implements UserRepository {
     const values: unknown[] = [];
     let index = 1;
 
+    if (data.nama !== undefined) {
+      fields.push(`nama = $${index++}`);
+      values.push(data.nama);
+    }
     if (data.email !== undefined) {
       fields.push(`email = $${index++}`);
       values.push(data.email);
@@ -58,17 +62,13 @@ export class PostgresUserRepository implements UserRepository {
       fields.push(`password = $${index++}`);
       values.push(data.password);
     }
-    if (data.name !== undefined) {
-      fields.push(`name = $${index++}`);
-      values.push(data.name);
-    }
     if (data.role !== undefined) {
       fields.push(`role = $${index++}`);
       values.push(data.role);
     }
-    if (data.isActive !== undefined) {
-      fields.push(`is_active = $${index++}`);
-      values.push(data.isActive);
+    if (data.status !== undefined) {
+      fields.push(`status = $${index++}`);
+      values.push(data.status);
     }
 
     if (fields.length === 0) {
@@ -91,11 +91,11 @@ export class PostgresUserRepository implements UserRepository {
   private mapRowToUser(row: Record<string, unknown>): User {
     return {
       id: row.id as string,
+      nama: row.nama as string,
       email: row.email as string,
       password: row.password as string,
-      name: row.name as string,
-      role: row.role as UserRole,
-      isActive: row.isActive as boolean,
+      role: row.role as User['role'],
+      status: row.status as User['status'],
       createdAt: row.createdAt as Date,
       updatedAt: row.updatedAt as Date,
     };
